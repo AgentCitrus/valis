@@ -9,6 +9,7 @@ use ratatui::{
     widgets::{Block, Paragraph, Widget},
     DefaultTerminal, Frame,
 };
+use tui_textarea::TextArea;
 
 fn main() -> io::Result<()> {
     let mut terminal = ratatui::init();
@@ -19,8 +20,6 @@ fn main() -> io::Result<()> {
 
 #[derive(Debug, Default)]
 pub struct App {
-    counter: u8,
-    message: String,
     exit: bool
 }
 
@@ -29,13 +28,6 @@ impl App {
         while !self.exit {
             terminal.draw(|frame| self.draw(frame))?;
             self.handle_events()?;
-            if self.counter == 0 {
-                self.set_message(String::from("Minimum"));
-            } else if self.counter == 255 {
-                self.set_message(String::from("Maximum"));
-            } else {
-                self.set_message(String::from(""));
-            }
         }
         Ok(())
     }
@@ -57,16 +49,6 @@ impl App {
     fn handle_key_event(&mut self, key_event: KeyEvent) {
         match key_event.code {
             KeyCode::Char('q') => self.exit(),
-            KeyCode::Right => {
-                if self.counter < 255 {
-                    self.increment();
-                }
-            },
-            KeyCode::Left => {
-                if self.counter > 0 {
-                    self.decrement()
-                }
-            },
             _ => {}
         }
     }
@@ -74,28 +56,12 @@ impl App {
     fn exit(&mut self) {
         self.exit = true;
     }
-
-    fn increment(&mut self) {
-        self.counter += 1;
-    }
-
-    fn decrement(&mut self) {
-        self.counter -= 1;
-    }
-
-    fn set_message(&mut self, string: String)    {
-        self.message = string;
-    }
 }
 
 impl Widget for &App {
     fn render(self, area: Rect, buf: &mut Buffer)   {
-        let title = Line::from(" Counter App ".bold());
+        let title = Line::from(" TextArea Test ".bold());
         let instructions = Line::from(vec![
-            " Decrement ".into(),
-            "<Left>".blue().bold(),
-            " Increment ".into(),
-            "<Right>".blue().bold(),
             " Quit ".into(),
             "<Q>".blue().bold(),
         ]);
@@ -103,14 +69,10 @@ impl Widget for &App {
             .title(title.centered())
             .title_bottom(instructions.centered())
             .border_set(border::THICK);
-        
+
         let counter_text = Text::from(vec![
             Line::from(vec![
-                "Value: ".into(),
-                self.counter.to_string().yellow(),
-            ]),
-            Line::from(vec![
-                self.message.as_str().into(),
+                "Sup".into(),
             ]),
         ]);
 

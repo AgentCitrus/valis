@@ -2,7 +2,7 @@ use std::io;
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
 use ratatui::{
     buffer::Buffer,
-    layout::Rect,
+    layout::*,
     style::Stylize,
     symbols::border,
     text::{Line, Text},
@@ -33,7 +33,17 @@ impl App {
     }
 
     fn draw(&self, frame: &mut Frame)   {
-        frame.render_widget(self, frame.area());
+        let layout = Layout::default()
+            .direction(Direction::Vertical)
+            .constraints(vec![
+                Constraint::Percentage(80),
+                Constraint::Percentage(20),
+            ])
+            .split(frame.area());
+
+        let log = Log::default();
+
+        frame.render_widget(log, layout[0]);
     }
 
     fn handle_events(&mut self) -> io::Result<()> {
@@ -58,7 +68,12 @@ impl App {
     }
 }
 
-impl Widget for &App {
+#[derive(Default)]
+pub struct Log {
+    
+}
+
+impl Widget for Log {
     fn render(self, area: Rect, buf: &mut Buffer)   {
         let title = Line::from(" TextArea Test ".bold());
         let instructions = Line::from(vec![
@@ -72,7 +87,7 @@ impl Widget for &App {
 
         let counter_text = Text::from(vec![
             Line::from(vec![
-                "Sup".into(),
+                "Yo".into(),
             ]),
         ]);
 
